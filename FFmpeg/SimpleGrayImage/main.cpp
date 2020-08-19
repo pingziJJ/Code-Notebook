@@ -1,10 +1,11 @@
-#include <iostream>
-
-#define out &
 
 extern "C" {
 #include "libavformat/avformat.h"
+#include "libavutil/avutil.h"
+#include "libavcodec/avcodec.h"
 }
+
+#define out &
 
 static void logging(const char *fmt, ...) {
     va_list arg;
@@ -32,7 +33,7 @@ static void save_gray_image(uint8_t *buf, int wrap, int x_size, int y_size, cons
 static int decode_packet(AVPacket *packet, AVCodecContext *codec_context, AVFrame *frame) {
     int response = avcodec_send_packet(codec_context, packet);
     if (response < 0) {
-        logging("ERROR while sending a packet to the decoder: %s", av_err2str(response));
+        logging("ERROR while sending a packet to the decoder");
         return response;
     }
 
@@ -43,7 +44,7 @@ static int decode_packet(AVPacket *packet, AVCodecContext *codec_context, AVFram
         }
 
         if (response < 0) {
-            logging("ERROR while receiving a frame from the decoder: %s", av_err2str(response));
+            logging("ERROR while receiving a frame from the decoder");
             return response;
         }
 

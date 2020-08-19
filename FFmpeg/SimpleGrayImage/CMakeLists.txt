@@ -1,19 +1,20 @@
 cmake_minimum_required(VERSION 3.16)
 project(SimpleGrayImage)
 
-set(CMAKE_CXX_STANDARD 20)
-
 include_directories("includes")
 link_directories("libs")
 
+set(CMAKE_CXX_STANDARD 20)
+
+
 add_executable(SimpleGrayImage main.cpp)
 
-link_libraries(
+target_link_libraries(
         SimpleGrayImage
+        avformat
         avcodec
         avdevice
         avfilter
-        avformat
         avutil
         postproc
         swresample
