@@ -13,7 +13,7 @@ static void info(const char *fmt, ...);
 
 static void error(const char *fmt, ...);
 
-static void logging(FILE *file, const char *fmt, va_arg args);
+static void logging(FILE *file, const char *fmt, va_list args);
 
 static int decode_video(AVCodecContext *decoder, AVPacket *packet);
 

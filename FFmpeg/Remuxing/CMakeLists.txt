@@ -1,20 +1,19 @@
 cmake_minimum_required(VERSION 3.16)
-project(SimpleGrayImage)
+project(Remuxing)
 
 include_directories("includes")
 link_directories("libs")
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 14)
 
-
-add_executable(SimpleGrayImage main.cpp 20-08-21/main.cpp)
+add_executable(Remuxing main.cpp Remuxing0821.cpp Remuxing0821.h logger.cpp logger.h)
 
 target_link_libraries(
-        SimpleGrayImage
-        avformat
+        Remuxing
         avcodec
         avdevice
         avfilter
+        avformat
         avutil
         postproc
         swresample
