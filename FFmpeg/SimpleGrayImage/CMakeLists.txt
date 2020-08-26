@@ -7,7 +7,7 @@ link_directories("libs")
 set(CMAKE_CXX_STANDARD 20)
 
 
-add_executable(SimpleGrayImage main.cpp 20-08-21/main.cpp)
+add_executable(SimpleGrayImage main.cpp GrayImage0826.cpp GrayImage0826.h Logger.cpp Logger.h)
 
 target_link_libraries(
         SimpleGrayImage
