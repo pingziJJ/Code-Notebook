@@ -260,7 +260,7 @@ typedef struct AVCodec {
      * Initialize codec static data, called from avcodec_register().
      *
      * This is not intended for time consuming operations as it is
-     * run for every codec regardless of that codec being used.
+     * run_0821 for every codec regardless of that codec being used.
      */
     void (*init_static_data)(struct AVCodec *codec);
 

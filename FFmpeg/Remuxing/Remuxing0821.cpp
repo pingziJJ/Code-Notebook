@@ -11,7 +11,7 @@ extern "C"{
 #include "libavformat/avformat.h"
 }
 
-int run(int argc, char **argv) {
+int run_0821(int argc, char **argv) {
 
     if (argc < 3) {
         error("You must pass at least two parameters.");

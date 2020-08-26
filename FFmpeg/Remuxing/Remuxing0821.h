@@ -7,4 +7,4 @@
 
 #endif //REMUXING_REMUXING0821_H
 
-int run(int argc, char *argv[]);
+int run_0821(int argc, char *argv[]);
