@@ -6,7 +6,7 @@ link_directories("libs")
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(Transcoding main.cpp Logger.cpp Logger.h transcoding_0826.cpp transcoding_0826.h)
+add_executable(Transcoding main.cpp Logger.cpp Logger.h transcoding_0826.cpp transcoding_0826.h transcoding0828.cpp transcoding0828.h)
 target_link_libraries(
         Transcoding
         avcodec
