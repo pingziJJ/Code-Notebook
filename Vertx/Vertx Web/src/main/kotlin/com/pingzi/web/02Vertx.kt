@@ -6,6 +6,7 @@ import io.vertx.core.AsyncResult
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.eventbus.Message
 import io.vertx.core.json.JsonObject
+import io.vertx.core.shareddata.impl.ClusterSerializable
 import java.nio.CharBuffer
 import java.nio.charset.Charset
 
@@ -95,7 +96,7 @@ fun main() {
     println("使用字符串创建: " + stringBuffer.toString() + ", " + stringBuffer.length())
     // 带编码的字符串创建
     val stringEncodeBuffer = Buffer.buffer(helloWorld, "utf-8")
-    println("使用带编码的字符串Buffer: " +stringEncodeBuffer.toString() + ", " + stringEncodeBuffer.length())
+    println("使用带编码的字符串Buffer: " + stringEncodeBuffer.toString() + ", " + stringEncodeBuffer.length())
     // 直接使用 byteBuffer
     val nettyBuffer = Unpooled.buffer(16)
     for (i in 0..15) {
@@ -145,7 +146,7 @@ class WorkerVerticle : AbstractVerticle() {
     override fun start() {
         println("start worker")
         val event = vertx.eventBus()
-        event.consumer<JsonObject>("MSG://EVENT/BUS") {reply ->
+        event.consumer<JsonObject>("MSG://EVENT/BUS") { reply ->
             println("${Thread.currentThread().name}: Consume Message...")
             val message = reply.body()
             println("message: ${message.encode()}")
@@ -156,22 +157,52 @@ class WorkerVerticle : AbstractVerticle() {
 }
 
 class Buffalo {
-    fun write(buffer: Buffer, data: Array<String>) {
-        for (item in data) {
-            val bytes = item.toByteArray(Charset.defaultCharset())
-            buffer.appendInt(bytes.size)
-            buffer.appendBytes(bytes)
+    companion object {
+        fun write(buffer: Buffer, data: Array<String>) {
+            for (item in data) {
+                val bytes = item.toByteArray(Charset.defaultCharset())
+                buffer.appendInt(bytes.size)
+                buffer.appendBytes(bytes)
+            }
         }
+
+        fun read(start: Int, buffer: Buffer, reference: Array<String>) : Int{
+            var pos = start
+            for (index in 0 until reference.size) {
+                val len = buffer.getInt(pos)
+                pos += 4
+                val bytes = buffer.getBytes(pos, pos + len)
+                reference[index] = String(bytes, Charset.defaultCharset())
+                pos += len
+            }
+
+            return pos
+        }
+    }
+}
+
+class BasicUser: ClusterSerializable {
+
+    @Transient
+    private var id: String = ""
+    @Transient
+    private var username: String = ""
+    @Transient
+    private var password: String = ""
+
+    override fun readFromBuffer(pos: Int, buffer: Buffer): Int {
+        val strings = Array(3) {""}
+        val result = Buffalo.read(pos, buffer, strings)
+
+        this.id = strings[0]
+        this.username = strings[1]
+        this.password = strings[2]
+
+        return result
     }
 
-    fun read(start: Int, buffer: Buffer, references: Array<String>) {
-        var pos = start
-        for (i in references.indices) {
-            val len = buffer.getInt(pos)
-            pos += 4
-            val bytes = buffer.getBytes(pos, pos + len)
-            references[i] = String(bytes, Charset.defaultCharset())
-            pos += len
-        }
+    override fun writeToBuffer(buffer: Buffer) {
+        Buffalo.write(buffer, arrayOf(id, username, password))
     }
+
 }
